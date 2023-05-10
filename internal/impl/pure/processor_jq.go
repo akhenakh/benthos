@@ -98,6 +98,7 @@ pipeline:
 			docs.FieldString("query", "The jq query to filter and transform messages with."),
 			docs.FieldBool("raw", "Whether to process the input as a raw string instead of as JSON.").Advanced(),
 			docs.FieldBool("output_raw", "Whether to output raw text (unquoted) instead of JSON strings when the emitted values are string types.").Advanced(),
+			docs.FieldBool("compact", "Using this option will result in more compact output by instead putting each JSON object on a single line.").Advanced(),
 		).ChildDefaultAndTypesFromStruct(processor.NewJQConfig()),
 	})
 	if err != nil {
@@ -110,17 +111,22 @@ var jqCompileOptions = []gojq.CompilerOption{
 }
 
 type jqProc struct {
-	inRaw  bool
-	outRaw bool
-	log    log.Modular
-	code   *gojq.Code
+	inRaw   bool
+	outRaw  bool
+	compact bool
+	log     log.Modular
+	code    *gojq.Code
 }
 
 func newJQ(conf processor.JQConfig, mgr bundle.NewManagement) (*jqProc, error) {
 	j := &jqProc{
-		inRaw:  conf.Raw,
-		outRaw: conf.OutputRaw,
-		log:    mgr.Logger(),
+		inRaw:   conf.Raw,
+		outRaw:  conf.OutputRaw,
+		log:     mgr.Logger(),
+	}
+
+	if conf.Compact {
+		jqCompileOptions = append(jqCompileOptions, TODO)
 	}
 
 	query, err := gojq.Parse(conf.Query)

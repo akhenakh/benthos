@@ -5,6 +5,7 @@ type JQConfig struct {
 	Query     string `json:"query" yaml:"query"`
 	Raw       bool   `json:"raw" yaml:"raw"`
 	OutputRaw bool   `json:"output_raw" yaml:"output_raw"`
+	Compact   bool   `json:"compact" yaml:"compact"`
 }
 
 // NewJQConfig returns a JQConfig with default values.
